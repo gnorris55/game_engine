@@ -23,7 +23,6 @@
 #include <RigidBodies/Plane.h>
 #include <RigidBodies/sphere.h>
 #include <shaders/shader_c.h>
-#include <ecosystem/render_tile.h>
 #include <ecosystem/Terrain.h>
 #include <ecosystem/skybox.h>
 #include <learnopengl/model.h>
@@ -118,7 +117,7 @@ int main()
     Plane curr_plane = Plane(glm::vec4(0, -5.0f, 0, 1), glm::vec4(0.0, 1.0, 0.0, 0), &body_shader);
     Plane curr_plane2 = Plane(glm::vec4(0, -3.0f, 0, 1), glm::vec4(1.0, 1.0, 0.0, 0), &body_shader);
    
-    Terrain* terrain = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(0.0f, -5.0f, 0.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true);
+    Terrain* terrain = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(0.0f, -5.0f, 0.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true );
     //Terrain* terrain2 = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(-128.0f, -5.0f, 0.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true);
     //Terrain* terrain3 = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(0.0f, -5.0f, 128.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true);
     //Terrain* terrain4 = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(-128.0f, -5.0f, 128.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true);

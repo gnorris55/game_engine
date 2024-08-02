@@ -138,10 +138,12 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ecosystem\RenderTileTree.h" />
     <ClInclude Include="include\ecosystem\render_tile.h" />
     <ClInclude Include="include\ecosystem\skybox.h" />
     <ClInclude Include="include\ecosystem\Terrain.h" />
     <ClInclude Include="include\learnopengl\Camera.h" />
+    <ClInclude Include="include\learnopengl\model.h" />
     <ClInclude Include="include\RigidBodies\CollisionHandler.h" />
     <ClInclude Include="include\RigidBodies\Cube.h" />
     <ClInclude Include="include\RigidBodies\PhysicsHandler.h" />
