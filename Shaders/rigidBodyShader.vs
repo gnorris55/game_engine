@@ -6,18 +6,18 @@ layout (location = 2) in vec2 aTexCoords;
 out vec2 TexCoords;
 out vec3 FragPos;
 out vec3 Normal;
-out vec3 tn;
 
 uniform mat4 model;
 uniform mat4 projView;
+uniform float textureScalar = 1.0;
 
 void main()
 {
+    //FragPos = vec3(vec4(aPos, 1.0)*model);
     FragPos = vec3(vec4(aPos, 1.0)*model);
     Normal = aNormal * mat3(transpose(inverse(model)));  
-    tn = aNormal;
     gl_Position = projView * vec4(FragPos, 1.0);
 
-    TexCoords = aTexCoords;
+    TexCoords = aTexCoords*textureScalar;
 
 }

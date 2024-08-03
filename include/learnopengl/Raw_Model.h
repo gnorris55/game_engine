@@ -23,7 +23,7 @@ using namespace std;
 
 unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
 
-class Model
+class Model : public Entity
 {
 public:
     // model data 
@@ -33,14 +33,27 @@ public:
     bool gammaCorrection;
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, bool gamma = false) : gammaCorrection(gamma)
-    {
+    Model(Shader * shader, string const& path, glm::vec4 starting_position = glm::vec4(0, 0, 0, 1), bool gamma = false ) : Entity(shader, starting_position.xyz())     {
+        stbi_set_flip_vertically_on_load(true);
         loadModel(path);
+        stbi_set_flip_vertically_on_load(false);
+        gammaCorrection = gamma;
     }
 
+
     // draws the model, and thus all its meshes
-    void Draw(Shader& shader)
+    void draw(glm::mat4 proj, glm::mat4 view, glm::vec3 camera_position) override
     {
+        shader->use();
+        shader->setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        shader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        shader->setVec3("lightPos", -30.0f, 50.0f, 20.0f);
+        shader->setVec3("viewPos", camera_position);
+        shader->setMat4("projView", proj * view);
+        shader->setMat4("model", transform_matrix);
+        shader->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        shader->setBool("hasTexture", true);
+
         for (unsigned int i = 0; i < meshes.size(); i++) {
             glm::vec4 curr_color = ((float)i) / (meshes.size()) * glm::vec4(1, 1, 1, 1);
             meshes[i].changeMeshColor(shader, curr_color);

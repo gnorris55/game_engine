@@ -137,8 +137,6 @@ private:
 		return 0;
 	}
 
-	// this function uses compute shaders to create a random texture map for grass offset
-	// TODO: implement culling based on occlusion
 	void runGrassDisplacementAlg() {
 
 		compute_shader->use();
@@ -183,10 +181,6 @@ private:
 			}
 			
 		}
-		/*
-		for (int i = 0; i < 64; i++) {
-			std::cout << "float val: " << curve_coefficients[i] << "\n";
-		}*/
 
 
 		glGenVertexArrays(1, &grass_VAO);

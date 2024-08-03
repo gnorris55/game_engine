@@ -1,3 +1,4 @@
+
 #define STB_IMAGE_IMPLEMENTATION
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_SWIZZLE
@@ -15,8 +16,8 @@
 #include <iostream>
 #include <math.h> 
 
-
 #include <shaders/Shader.h>
+#include <SceneManagement/Entity.h> 
 #include <learnopengl/Camera.h>
 #include <learnopengl/Raw_Model.h>
 #include <RigidBodies/PhysicsHandler.h>
@@ -26,6 +27,7 @@
 #include <ecosystem/Terrain.h>
 #include <ecosystem/skybox.h>
 #include <learnopengl/model.h>
+#include <SceneManagement/SceneRenderer.h> 
 
 
 
@@ -33,7 +35,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
-void simulate_physics(float time, int& nbFrames, PhysicsManager *physics_handler, float freq, float accumulator);
+void simulate_physics(float time, int& nbFrames, PhysicsManager* physics_handler, float freq, float accumulator);
 void get_fps(int& frameCount, float currentTime, float& prev_time);
 
 // settings
@@ -112,22 +114,21 @@ int main()
     body_shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
     body_shader.setVec3("lightPos", -30.0f, 50.0f, 20.0f);
 
+    Terrain* terrain = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(0.0f, -5.0f, 0.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", false);
     Sphere sphere = Sphere(&body_shader, 1.0, glm::vec4(5.0, 3.0, 5.0, 1.0), glm::vec4(0.0, 0.0, 0.0, 0.0), glm::vec4(0.0f, 0.0f, 0.0f, 0), glm::vec3(0.53, 0.81, 0.94), 1);
-    Sphere sphere2 = Sphere(&body_shader, 0.5, glm::vec4(8.0, 3.0, 9.0, 1.0), glm::vec4(0.0, -15.0, 2.0, 0.0), glm::vec4(0.0f, 0.0f, 5.0f, 0), glm::vec3(0.7, 0.6, 0.3), 1);
     Plane curr_plane = Plane(glm::vec4(0, -5.0f, 0, 1), glm::vec4(0.0, 1.0, 0.0, 0), &body_shader);
-    Plane curr_plane2 = Plane(glm::vec4(0, -3.0f, 0, 1), glm::vec4(1.0, 1.0, 0.0, 0), &body_shader);
-   
-    Terrain* terrain = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(0.0f, -5.0f, 0.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true );
-    //Terrain* terrain2 = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(-128.0f, -5.0f, 0.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true);
-    //Terrain* terrain3 = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(0.0f, -5.0f, 128.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true);
-    //Terrain* terrain4 = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(-128.0f, -5.0f, 128.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", true);
+    Model ourModel(&body_shader, "Models/backpack/backpack.obj");
+    Model model2 = ourModel;
+    model2.set_position(glm::vec3(3, 0, 0));
+    SceneRenderer scene_renderer = SceneRenderer(&camera);
     
+    scene_renderer.add_entity(&ourModel);
+    scene_renderer.add_entity(&model2);
+    scene_renderer.add_entity(&sphere);
+
     PhysicsManager physics_handler;
     physics_handler.add_sphere(&sphere);
-    physics_handler.add_sphere(&sphere2);
     physics_handler.add_plane(&curr_plane);
-    //physics_handler.add_plane(&curr_plane2);
-    //physics_handler.test_bisection();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -142,21 +143,13 @@ int main()
     float accumulator = 0;
     while (!glfwWindowShouldClose(window))
     {
-        
+
         float currentTime = static_cast<float>(glfwGetTime());
         deltaTime = currentTime - lastTime;
 
-
         get_fps(frameCount, currentTime, prev_time);
-
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            std::cout << "pressed space\n";
-            glm::vec4 input_force = glm::vec4(0.0, 50.0, 0.0, 0.0);
-            sphere.input_acc = input_force;
-        }
-
-        scene_frustum.update_visibility_planes();
         simulate_physics(currentTime, nbFrames, &physics_handler, 0.01, accumulator);
+        scene_frustum.update_visibility_planes();
 
         // per-frame time logic
         // --------------------
@@ -169,24 +162,18 @@ int main()
         glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
-        //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 projection = camera.GetProjection(); 
+        glm::mat4 projection = camera.GetProjection();
         glm::mat4 view = camera.GetViewMatrix();
-        sphere.draw(projection*view, camera.Position);
-        sphere2.draw(projection*view, camera.Position);
+        // view/projection transformations
+
         terrain->draw(currentTime, projection, view, camera.Position, &scene_frustum);
-        //terrain2->draw(currentTime, projection, view, camera.Position, &scene_frustum);
-        //terrain3->draw(currentTime, projection, view, camera.Position, & scene_frustum);
-        //terrain4->draw(currentTime, projection, view, camera.Position, &scene_frustum);
-        //curr_plane.draw(projection, view, camera.Position);
-      //  curr_plane2.draw(projection, view, camera.Position);
+        scene_renderer.render_scene();
         lastTime = currentTime;
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    
+
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
@@ -194,36 +181,36 @@ int main()
     return 0;
 }
 
-void get_fps(int &frameCount, float currentTime, float &prev_time) {
+void get_fps(int& frameCount, float currentTime, float& prev_time) {
     float frameDeltaTime = currentTime - prev_time;
     frameCount++;
     if (frameDeltaTime >= 1.0) {
-       // Calculate FPS
-       double fps = (double)frameCount / frameDeltaTime;
+        // Calculate FPS
+        double fps = (double)frameCount / frameDeltaTime;
 
-       // Display FPS
-       std::cout << "fps: " << fps << "\n";
-       // Reset for next calculation
-            
-       prev_time = currentTime;
-       frameCount = 0;
+        // Display FPS
+        std::cout << "fps: " << fps << "\n";
+        // Reset for next calculation
+
+        prev_time = currentTime;
+        frameCount = 0;
     }
 }
 
-void simulate_physics(float time, int& nbFrames, PhysicsManager *physics_handler, float freq, float accumulator) {
+void simulate_physics(float time, int& nbFrames, PhysicsManager* physics_handler, float freq, float accumulator) {
 
-        nbFrames++;
-        float delta_time = time - lastTime;
-        lastTime = time;
-        accumulator += delta_time;
-        while (accumulator >= freq) {
-            //std::cout << time << "\n";
-            // Print the average FPS over the last second
-            physics_handler->physics_step(freq);
-            
-            nbFrames = 0;
-            accumulator -= freq;
-        }
+    nbFrames++;
+    float delta_time = time - lastTime;
+    lastTime = time;
+    accumulator += delta_time;
+    while (accumulator >= freq) {
+        //std::cout << time << "\n";
+        // Print the average FPS over the last second
+        physics_handler->physics_step(freq);
+
+        nbFrames = 0;
+        accumulator -= freq;
+    }
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -283,5 +270,3 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
-
-

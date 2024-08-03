@@ -65,6 +65,18 @@
     <ClInclude Include="include\learnopengl\model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\learnopengl\Raw_Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneManagement\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneManagement\SceneRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\learnopengl\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\computeShader.cs">

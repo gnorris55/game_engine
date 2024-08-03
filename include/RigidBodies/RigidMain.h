@@ -9,7 +9,7 @@
 #include <learnopengl/model.h>
 
 
-class MainRigidBody {
+class MainRigidBody : public Entity {
 
 public:
 	
@@ -41,7 +41,7 @@ public:
 
 	//glm::vec4 friction_acc = glm::vec4(0.0, 0.0, 0.0, 0.0);
 
-	MainRigidBody(Shader *shader, glm::vec4 starting_pos, glm::vec4 starting_velocity, glm::vec4 starting_angular, glm::vec3 scale, glm::vec3 color, float mass) {
+	MainRigidBody(Shader *shader, glm::vec4 starting_pos, glm::vec4 starting_velocity, glm::vec4 starting_angular, glm::vec3 scale, glm::vec3 color, float mass) : Entity(shader, starting_pos.xyz()) {
 		this->shader = shader;
 		this->scale = scale;
 		this->mass = mass;
@@ -81,7 +81,7 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void draw(glm::mat4 projView, glm::vec3 camera_position) {
+	void draw(glm::mat4 proj, glm::mat4 view, glm::vec3 camera_position) {
 
 		shader->use();
 		glActiveTexture(GL_TEXTURE0);
@@ -89,9 +89,9 @@ public:
 		
 		shader->setMat4("model", current_state.local_coords_matrix);
 		shader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		shader->setVec3("lightPos", -30.0f, 50.0f, 20.0f);
+		//shader->setVec3("lightPos", -30.0f, 50.0f, 20.0f);
 		shader->setVec3("viewPos", camera_position);
-		shader->setMat4("projView", projView);
+		shader->setMat4("projView", proj*view);
 		shader->setVec3("objectColor", color);
 		shader->setBool("hasTexture", false);
 

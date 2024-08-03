@@ -59,6 +59,10 @@ public:
 		shader->setVec3("viewPos", view_pos);
 		shader->setMat4("projection", proj);
 		shader->setMat4("view", view);
+		shader->setFloat("textureScalar", 40.0f);
+		shader->setBool("hasTexture", true);
+
+
 		glUniform3fv(glGetUniformLocation(shader->ID, "objectColor"), 1, glm::value_ptr(glm::vec3(0.7, 0.7, 0.7)));
 		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		renderer.render(temp_mesh, GL_TRIANGLES);
@@ -95,7 +99,7 @@ private:
 	}
 
 	void load_textures(const char* grass_heights_name, const char* terrain_heights_name) {
-		texture = loader.load_texture("Textures/grass.jpg");
+		texture = loader.load_texture("Textures/dirt.jpg");
 		height_map_tex = loader.load_texture(terrain_heights_name);
 	}
 		
