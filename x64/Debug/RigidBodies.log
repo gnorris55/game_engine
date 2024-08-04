@@ -27,8 +27,9 @@ C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\include\ecosystem\Render
 C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\include\ecosystem\Terrain.h(107,9): warning C4101: 'winds': unreferenced local variable
 C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\include\ecosystem\Terrain.h(147,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\include\ecosystem\Terrain.h(150,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\Main.cpp(140,27): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\Main.cpp(141,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\Main.cpp(151,67): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\Main.cpp(221,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\Main.cpp(154,27): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\Main.cpp(155,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\Main.cpp(165,67): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\Main.cpp(238,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   RigidBodies.vcxproj -> C:\Users\graem\Desktop\Graphics\projects\GraphicsEngine\x64\Debug\GraphicsEngine.exe

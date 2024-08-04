@@ -18,6 +18,7 @@
 
 #include <shaders/Shader.h>
 #include <SceneManagement/Entity.h> 
+#include <SceneManagement/Light.h> 
 #include <learnopengl/Camera.h>
 #include <learnopengl/Raw_Model.h>
 #include <RigidBodies/PhysicsHandler.h>
@@ -100,6 +101,8 @@ int main()
     Frustum scene_frustum = Frustum(&camera);
 
     Shader main_shader("Shaders/default_shader.vs", "Shaders/default_fragment_shader.fs");
+    Shader geometry_pass_shader("Shaders/geometryPassShader.vs", "Shaders/geometryPassShader.fs");
+    Shader lighting_pass_shader("Shaders/lightingPassShader.vs", "Shaders/lightingPassShader.fs");
     Shader body_shader("Shaders/rigidBodyShader.vs", "Shaders/rigidBodyShader.fs");
     Shader grass_shader("Shaders/grassShader.vs", "Shaders/grassShader.fs", "Shaders/grass_shader.gs");
     ComputeShader clipping_shader("Shaders/terrainComputeShader.cs");
@@ -113,26 +116,37 @@ int main()
     body_shader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
     body_shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
     body_shader.setVec3("lightPos", -30.0f, 50.0f, 20.0f);
+    body_shader.setBool("hasTexture", false);
 
     Terrain* terrain = new Terrain(&main_shader, &grass_shader, &clipping_shader, glm::vec4(0.0f, -5.0f, 0.0f, 1.0), "Textures/clumping2.jpg", "Textures/height_map1.jpg", false);
-    Sphere sphere = Sphere(&body_shader, 1.0, glm::vec4(5.0, 3.0, 5.0, 1.0), glm::vec4(0.0, 0.0, 0.0, 0.0), glm::vec4(0.0f, 0.0f, 0.0f, 0), glm::vec3(0.53, 0.81, 0.94), 1);
-    Plane curr_plane = Plane(glm::vec4(0, -5.0f, 0, 1), glm::vec4(0.0, 1.0, 0.0, 0), &body_shader);
-    Model ourModel(&body_shader, "Models/backpack/backpack.obj");
-    Model model2 = ourModel;
-    model2.set_position(glm::vec3(3, 0, 0));
-    SceneRenderer scene_renderer = SceneRenderer(&camera);
+    Sphere sphere = Sphere(&geometry_pass_shader, 1.0, glm::vec4(5.0, 3.0, 5.0, 1.0), glm::vec4(0.0, 0.0, 0.0, 0.0), glm::vec4(0.0f, 0.0f, 0.0f, 0), glm::vec3(0.53, 0.81, 0.94), 1);
+    Plane curr_plane = Plane(glm::vec4(0, -5.0f, 0, 1), glm::vec4(1.0, 1.0, 1.0, 0), &body_shader);
     
-    scene_renderer.add_entity(&ourModel);
-    scene_renderer.add_entity(&model2);
-    scene_renderer.add_entity(&sphere);
+    Model ourModel(&geometry_pass_shader, "Models/backpack/backpack.obj");
+    Model copyModel = ourModel;
+    copyModel.set_position(glm::vec3(10, 0, 0));
+
+    Light light1 = Light(&body_shader, glm::vec3(5, 0, -2), glm::vec3(0.0, 1.0, 0.0), 0.14f, 0.07f);
+    Light light2 = Light(&body_shader, glm::vec3(0, 0, 5), glm::vec3(0.0, 1.0, 1.0), 0.00014f, 0.00007f);
+    Light light3 = Light(&body_shader, glm::vec3(12, 0, 4), glm::vec3(1.0, 0.0, 1.0), 0.00014f, 0.00007f);
+
+    SceneRenderer scene_renderer = SceneRenderer(&lighting_pass_shader, &camera, SCR_WIDTH, SCR_HEIGHT);
+    scene_renderer.add_deferred_entity(&ourModel);
+    scene_renderer.add_deferred_entity(&copyModel);
+    scene_renderer.add_light(&light1);
+    scene_renderer.add_light(&light2);
+    scene_renderer.add_light(&light3);
+    scene_renderer.add_forward_entity(&light1);
+    scene_renderer.add_forward_entity(&light2);
+    scene_renderer.add_forward_entity(&light3);
 
     PhysicsManager physics_handler;
-    physics_handler.add_sphere(&sphere);
-    physics_handler.add_plane(&curr_plane);
+    //physics_handler.add_sphere(&sphere);
+    //physics_handler.add_plane(&curr_plane);
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // render loop
     // -----------
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -159,15 +173,18 @@ int main()
 
         // render
         // ------
-        glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 projection = camera.GetProjection();
         glm::mat4 view = camera.GetViewMatrix();
         // view/projection transformations
 
-        terrain->draw(currentTime, projection, view, camera.Position, &scene_frustum);
+        
         scene_renderer.render_scene();
+        
+
+        //terrain->draw(currentTime, projection, view, camera.Position, &scene_frustum);
         lastTime = currentTime;
 
         glfwSwapBuffers(window);

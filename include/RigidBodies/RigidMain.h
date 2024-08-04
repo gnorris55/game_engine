@@ -88,17 +88,18 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texture);
 		
 		shader->setMat4("model", current_state.local_coords_matrix);
+		shader->setMat4("projView", proj*view);
 		shader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		//shader->setVec3("lightPos", -30.0f, 50.0f, 20.0f);
 		shader->setVec3("viewPos", camera_position);
-		shader->setMat4("projView", proj*view);
+		shader->setMat4("projView", proj * view);
 		shader->setVec3("objectColor", color);
 		shader->setBool("hasTexture", false);
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0);
 		//glDrawElements(GL_LINES, num_indices, GL_UNSIGNED_INT, 0);
-		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+		//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 		glBindVertexArray(VAO);
 
 	}

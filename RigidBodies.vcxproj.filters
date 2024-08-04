@@ -77,6 +77,9 @@
     <ClInclude Include="include\learnopengl\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SceneManagement\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\computeShader.cs">
@@ -110,6 +113,18 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="Shaders\terrainComputeShader.cs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Shaders\geometryPassShader.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Shaders\geometryPassShader.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Shaders\lightingPassShader.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Shaders\lightingPassShader.fs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

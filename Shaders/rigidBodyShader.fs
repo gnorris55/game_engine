@@ -17,7 +17,7 @@ uniform bool hasTexture;
 
 void main()
 {
-// ambient
+    // ambient
     float ambientStrength = 0.5;
     vec3 ambient = ambientStrength * lightColor;
   	
@@ -37,13 +37,10 @@ void main()
     vec3 specular = specularStrength * spec * vec3(texture(texture_specular1, TexCoords))*lightColor;  
     vec3 result = (ambient + diffuse_vec + specular) * objectColor; 
 
-
-
-
     if (hasTexture) {
         vec3 texCol = texture(texture_diffuse1, TexCoords).rgb;      
         FragColor = vec4(result, 1.0) * vec4(texCol, 1.0);
     } else {
-        FragColor = vec4(result, 1.0);
+        FragColor = vec4(objectColor, 1.0);
     }
 }
